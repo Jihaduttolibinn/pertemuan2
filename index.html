@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cek Cuaca</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      padding: 30px 40px;
+      width: 380px;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      font-weight: 600;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      text-align: center;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #333;
+      font-weight: 500;
+    }
+
+    button {
+      margin-top: 15px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      border: none;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 15px;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #0099ff, #004eff);
+    }
+
+    .info {
+      margin-top: 25px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+      transition: 0.5s;
+    }
+
+    .weather-icon {
+      width: 80px;
+      height: 80px;
+      margin: 15px auto;
+      display: block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .fadeInInfo {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Cek Cuaca Bolooo</h2>
+    <input type="text" id="lokasiInput" placeholder="Masukkan nama kota...">
+    <button id="cekBtn">Lihat Cuaca</button>
+
+    <div class="info" id="hasil">
+      <p>Negara: -</p>
+      <p>Provinsi: -</p>
+      <p>Kecamatan: -</p>
+      <p>Suhu: - °C</p>
+      <p>Longitude: -</p>
+      <p>Latitude: -</p>
+    </div>
+  </div>
+
+  <footer></footer>
+
+  <script>
+    $("#cekBtn").click(function () {
+      const lokasi = $("#lokasiInput").val();
+      if (!lokasi) {
+        alert("Masukkan nama kota terlebih dahulu!");
+        return;
+      }
+
+      const apiKey = "795b36927d784d7e8fa63932250810";
+      const urlapi = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lokasi}&aqi=no`;
+
+      $.ajax({
+        url: urlapi,
+        method: "GET",
+        success: function (data) {
+          console.log(data);
+
+          const icon = data.current.condition.icon;
+          const negara = data.location.country;
+          const provinsi = data.location.region;
+          const kecamatan = data.location.name;
+          const suhu = data.current.temp_c;
+          const lon = data.location.lon;
+          const lat = data.location.lat;
+
+          $("#hasil").html(`
+            <img src="https:${icon}" alt="Weather Icon" class="weather-icon">
+            <p><strong>Negara:</strong> ${negara}</p>
+            <p><strong>Provinsi:</strong> ${provinsi}</p>
+            <p><strong>Kecamatan:</strong> ${kecamatan}</p>
+            <p><strong>Suhu:</strong> ${suhu} °C</p>
+            <p><strong>Longitude:</strong> ${lon}</p>
+            <p><strong>Latitude:</strong> ${lat}</p>
+          `).addClass("fadeInInfo");
+        },
+        error: function () {
+          alert("Data tidak ditemukan! Periksa kembali nama lokasi.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
