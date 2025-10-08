@@ -114,4 +114,66 @@
       font-size: 14px;
       opacity: 0.7;
     }
-  
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Cek Cuaca Bolooo</h2>
+    <input type="text" id="lokasiInput" placeholder="Masukkan nama kota...">
+    <button id="cekBtn">Lihat Cuaca</button>
+
+    <div class="info" id="hasil">
+      <p>Negara: -</p>
+      <p>Provinsi: -</p>
+      <p>Kecamatan: -</p>
+      <p>Suhu: - °C</p>
+      <p>Longitude: -</p>
+      <p>Latitude: -</p>
+    </div>
+  </div>
+
+  <footer></footer>
+
+  <script>
+    $("#cekBtn").click(function () {
+      const lokasi = $("#lokasiInput").val();
+      if (!lokasi) {
+        alert("Masukkan nama kota terlebih dahulu!");
+        return;
+      }
+
+      const apiKey = "795b36927d784d7e8fa63932250810";
+      const urlapi = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lokasi}&aqi=no`;
+
+      $.ajax({
+        url: urlapi,
+        method: "GET",
+        success: function (data) {
+          console.log(data);
+
+          const icon = data.current.condition.icon;
+          const negara = data.location.country;
+          const provinsi = data.location.region;
+          const kecamatan = data.location.name;
+          const suhu = data.current.temp_c;
+          const lon = data.location.lon;
+          const lat = data.location.lat;
+
+          $("#hasil").html(`
+            <img src="https:${icon}" alt="Weather Icon" class="weather-icon">
+            <p><strong>Negara:</strong> ${negara}</p>
+            <p><strong>Provinsi:</strong> ${provinsi}</p>
+            <p><strong>Kecamatan:</strong> ${kecamatan}</p>
+            <p><strong>Suhu:</strong> ${suhu} °C</p>
+            <p><strong>Longitude:</strong> ${lon}</p>
+            <p><strong>Latitude:</strong> ${lat}</p>
+          `).addClass("fadeInInfo");
+        },
+        error: function () {
+          alert("Data tidak ditemukan! Periksa kembali nama lokasi.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
